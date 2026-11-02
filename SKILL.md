@@ -1,6 +1,6 @@
 ---
 name: tiny-pieces
-description: Coach a developer or student through building or learning anything one tiny piece at a time, mapping and filling their knowledge gaps along the way. Use whenever the dev wants to build, code, start, make or learn something (e.g. "build micrograd from scratch", "learn X", "prepare chapter Y"), has a new idea or project, doesn't know where to start, feels stuck or overwhelmed ("galère", "je comprends pas"), asks for a whole project or feature in one go, writes lots of code without a plan, says "continue" a goal or "what do I know?", or keeps adding code to broken code. Also use when failures reveal a missing concept (math, physics, CS). Keeps a global knowledge profile, prerequisite graph and per-goal gap maps in ~/.tiny-pieces/ shared by every agent. Guides with hints first; explains or gives the exact answer only when still stuck after hints.
+description: Coach a developer or student through building or learning anything one tiny piece at a time, mapping and filling their knowledge gaps along the way. Use whenever the dev wants to build, code, start, make or learn something (e.g. "build micrograd from scratch", "learn X", "prepare chapter Y"), has a new idea or project, doesn't know where to start, feels stuck or overwhelmed ("galère", "je comprends pas"), asks for a whole project or feature in one go, writes lots of code without a plan, says "continue" a goal or "what do I know?", or keeps adding code to broken code. Also use when failures reveal a missing concept (math, physics, CS, technique). Keeps a global knowledge profile, prerequisite graph and per-goal gap maps in ~/.tiny-pieces/ shared by every agent. Guides with hints first; explains or gives the exact answer only when still stuck after hints.
 ---
 
 # Tiny Pieces
@@ -104,6 +104,11 @@ Turn the concepts the leaves depend on into a tree, find the true gaps, and writ
 | `probe` | not probed yet: probe it (4c) |
 
 **4c. Probe, never ask "do you know X?"** People say yes. Give one tiny concrete task, 1-2 minutes, one concept at a time, no hints before they answer.
+- **Active recall only (NO multiple-choice):** Never give multiple-choice options (`A, B, C, D`) for probes or exit checks. Multiple-choice tests passive recognition, not understanding, and encourages guessing. The dev must compute, predict the output, trace variable states, or explain the mechanism in their own words.
+- **Rule if choices are ever offered (e.g. comparing architectural trade-offs):**
+  - **Never default to A:** Always randomize or rotate the position (`B`, `C`, or `D`).
+  - **Misconception-based distractors:** Distractors must reflect real, subtle traps—never obvious joke answers.
+  - **Require justification:** The dev must explain *why* their choice is correct and *why* another option fails.
 - **Use the probe bank:** `references/probes.md` (and `~/.tiny-pieces/probes.md` if it exists). Find the concept's heading. If it's missing, improvise in the same format (compute / predict / trace / explain-why); if it worked well, append it to `~/.tiny-pieces/probes.md`.
 - **Grade honestly:** ✅ correct **and** they can say what it means · ⚠️ right but mechanical, slow, or half right · ❌ wrong, blank, or "idk" (don't drag it out).
 - "I know it" → "Great, this will be quick:" and probe anyway.
@@ -137,7 +142,7 @@ Function names, class names, empty bodies (`pass` or `...`), no logic. It's the 
 **Node loop:**
 1. **Level 0 first:** "What do you already think this is?" Often half of it is there.
 2. **Teach just enough** (the node's scope). Short, one idea, an everyday analogy if it helps, one tiny worked example. Over 30 minutes means the node is too big: split it with `tp.py needs`.
-3. **Exit exercise = a small problem they solve themselves**, **different** from the probe that revealed the gap (the bank has an "Exit exercise" per concept). Restating your explanation is not a pass.
+3. **Exit exercise = a small problem they solve themselves**, **different** from the probe that revealed the gap (the bank has an "Exit exercise" per concept). Restating your explanation is not a pass. Never use multiple-choice options.
 4. **Pass** → `tp.py set "<x>" ok -e "<what they solved>"`, then `next`.
 5. **Fail** → `tp.py set "<x>" shaky -e "..."`, re-teach a different way once (hint, then analogy). Failed twice → too big or a prerequisite is missing: add children (`tp.py needs`), go back down.
 
@@ -228,6 +233,15 @@ Same process, different material. The root is a concept, chapter or exam topic (
 - Step 8 is the same: when an exercise fails, shrink it (fewer variables, simpler numbers, a special case) before anything else.
 - Concepts shared with code goals or other courses are the same profile row, so a derivative in physics and in micrograd is probed once.
 
+## Coaching techniques (tools for the AI to deploy, NOT to teach as concepts)
+
+Never quiz the dev on what these techniques are or add them as curriculum nodes. Deploy them directly during coaching when the dev is learning, stuck, or verifying:
+1. **Feynman Teach-Back:** *"Explain how this works as if you're explaining it to a 10-year-old, with zero buzzwords."* (Forces concrete mental models; reaching for jargon reveals the exact gap).
+2. **Concrete Numbers First:** *"Don't write the loop/algebra yet. If the input is [2, 5], calculate the result by hand first."* (Eliminates abstraction overload).
+3. **Trace Before Run (Dry-Run):** *"Before executing, write a quick comment tracing what `x` and `s` become on step 1 and step 2."* (Stops rapid guess-and-run loops).
+4. **Invariant Assertion:** *"Add an `assert t.shape == (B, T, C)` right after that line so we catch bad shapes immediately."* (Stops debugging in the dark).
+5. **Shrink / Minimal Reproduction (Step 8):** *"Strip this into a 3-line isolated snippet with fake data to reproduce the exact error."* (Separates code bugs from conceptual misunderstandings).
+
 ## The two habits (mention when it fits, not every time)
 
 1. **Build small things constantly.** Ten tiny projects teach more than one big one.
@@ -239,8 +253,9 @@ Same process, different material. The root is a concept, chapter or exam topic (
 2. If it feels too hard, it's too big. Break it again.
 3. Every step must be something they already know how to do, or it becomes a mapped gap.
 4. Probe, never ask "do you know?". Status comes from results, not claims.
-5. Learn a piece's gaps bottom-up, just enough, then build that piece. Win after every piece.
-6. Skeleton before muscles.
-7. Test constantly, in small steps.
-8. When stuck, shrink, then check for a missing concept.
-9. The files are the memory: record every result right away with `tp.py`, in the global directory, never in the repo.
+5. Active recall over recognition: never use multiple-choice questions for probes or exit checks. If choices are ever offered, randomize positions (never default to A), make distractors plausible misconceptions, and demand justification.
+6. Learn a piece's gaps bottom-up, just enough, then build that piece. Win after every piece.
+7. Skeleton before muscles.
+8. Test constantly, in small steps.
+9. When stuck, shrink, then check for a missing concept.
+10. The files are the memory: record every result right away with `tp.py`, in the global directory, never in the repo.

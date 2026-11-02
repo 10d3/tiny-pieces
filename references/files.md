@@ -32,7 +32,7 @@ dérivée = derivative
 ```
 
 - **Concept:** one canonical name per concept, no `,` or `|`. "Derivative" in micrograd and in a physics course is the same row. Before creating a row, look for the same concept under another wording or language and use `alias` instead.
-- **Domain:** one lowercase word (math, python, cs, ml, physics). Used by "what do I know?".
+- **Domain:** one lowercase word (math, python, cs, ml, physics, technique). Used by "what do I know?".
 - **Status:** ✅ ⚠️ ❌ ❓.
 - **Needs:** direct prerequisites only, comma-separated canonical names. This is the **global prerequisite graph**: written once, reused by every goal. No cycles.
 - **Evidence:** what exactly they solved or failed. Mandatory for ✅ ⚠️ ❌. A row with empty Evidence counts as ⚠️ until probed.

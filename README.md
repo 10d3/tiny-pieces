@@ -109,14 +109,17 @@ tiny-pieces/
 │   └── tp.py             # Atomic state & profile manager (Python 3 stdlib)
 └── references/
     ├── files.md          # File schemas and manual fallback procedures
-    └── probes.md         # Diagnostic probe bank (Math, Python, CS, ML, Physics)
+    └── probes.md         # Diagnostic probe bank (Math, Python, CS, ML, Physics, Technique)
 ```
 
 ---
 
-## 🛠️ Built-in Diagnostic Probe Bank
+## 🛠️ Built-in Diagnostic Probe Bank & Active Recall
 
-`references/probes.md` comes preloaded with diagnostic probes and exit exercises across:
+**Zero Guessing / No Option-A Bias:** Probes and exit exercises enforce active generation (computing values, predicting execution, line-by-line tracing, or explaining mechanisms in plain English). Multiple-choice recognition questions are barred from diagnostic checks.
+
+`references/probes.md` comes preloaded with diagnostic probes and exit exercises across 6 core domains:
+- **Technique:** Sliding window, two pointers, binary search, memoization & caching, prefix sums.
 - **Math:** Functions, slopes, limits, derivatives, chain rule, partial derivatives, gradients, integrals, linear algebra basics.
 - **Python:** Scope, mutability, closures, dunder methods, recursion, tracebacks, OOP.
 - **Computer Science:** Graphs, trees, BFS/DFS, DAGs, topological sorting, Big-O.

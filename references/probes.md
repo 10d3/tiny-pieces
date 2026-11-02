@@ -5,8 +5,8 @@ Ready-made probes for the gap map (Step 4) and exit exercises for learning nodes
 ## How to use
 
 - **Look up the concept** by heading (`grep -n "^### derivative" references/probes.md`). Also check the dev's own `~/.tiny-pieces/probes.md` (same format). If the concept is in neither, improvise in this format, and when the probe worked well, append it to `~/.tiny-pieces/probes.md` (never edit this file in place: the skill folder may be read-only).
-- **Probe** = detects the gap. 1-2 minutes, one concept, ask it cold, no hints before the answer.
-- **Exit exercise** = proves the node is learned. It is always a **different** question from the probe, so the dev can't just remember the answer.
+- **Probe** = detects the gap. 1-2 minutes, one concept, ask it cold, no hints before the answer. **Never use multiple-choice questions (MCQs)**: recognition of a listed answer is not proof of understanding. Probes must require active generation (compute, predict, trace, or explain).
+- **Exit exercise** = proves the node is learned. It is always a **different** question from the probe, so the dev can't just remember the answer. No multiple choice.
 - **Grading:** ✅ right and they can say what it means · ⚠️ right but mechanical, or half right (see "⚠️ if") · ❌ wrong, blank, or "idk".
 - **Needs** are *suggested* direct prerequisites. Record them once with `tp.py needs <concept> a,b`, then they are reused for every goal.
 - **Scope** = how deep to go "just enough for the root". Override it per goal with `tp.py map scope`.
@@ -19,6 +19,7 @@ Python: variables and types · functions and scope · lists and dicts · mutabil
 CS: graph · stack and queue · graph traversal · dag · topological sort · big o
 ML: computational graph · loss function · gradient descent · backpropagation · neuron
 Physics: units and dimensional analysis · vector components · free-body diagram · newtons second law · conservation of energy · conservation of momentum · coulombs law · electric field · electric flux · gauss law · ohms law and circuits
+Technique: sliding window · two pointers · binary search · memoization · prefix sum
 
 ---
 
@@ -442,3 +443,47 @@ Which line actually fails, and what is the cause?
 **⚠️ if:** uses 12 V across each resistor.
 **Exit exercise:** Same resistors in parallel across 12 V: total current? (12/4 + 12/2 = 9 A)
 **Scope:** V = IR, series/parallel, Kirchhoff's two rules if the goal needs them.
+
+---
+
+## Technique
+
+### sliding window
+*FR: fenêtre glissante · needs: loops and comprehensions*
+**Probe:** You want the maximum sum of any contiguous subarray of size k = 3 in `[2, 1, 5, 1, 3, 2]`. Describe how to compute it in O(N) time without re-summing from scratch at every step.
+**Expect:** Compute the sum of the first 3 elements (8). To move the window 1 step right, subtract the element leaving the window and add the new element entering it (8 - 2 + 1 = 7). Track the max.
+**⚠️ if:** knows O(N) is possible but recomputes `sum(arr[i:i+k])` at every index, or handles edge indices incorrectly.
+**Exit exercise:** In `[1, 3, 2, 6, -1, 4, 1, 8, 2]`, what is the sum of the first window of size 5, and what is the window sum after sliding one position right? (13; 13 - 1 + 4 = 16)
+**Scope:** fixed-size windows first; dynamic-size windows (while constraint holds) only if the goal needs it.
+
+### two pointers
+*FR: deux pointeurs · needs: lists and dicts, loops and comprehensions*
+**Probe:** Given a sorted array `[-4, -1, 0, 3, 10]`, you want to find two numbers that sum to 3. How do two pointers find this in O(N) time?
+**Expect:** Place pointer `L` at start (-4) and `R` at end (10). Sum = 6 > 3, so decrement R to decrease sum. If sum < target, increment L. Repeat until sum == 3 or pointers cross.
+**⚠️ if:** suggests nested loops (O(N²)), or doesn't know which pointer to move when sum > target.
+**Exit exercise:** For sorted `[1, 2, 4, 6, 8, 11]` and target 10, trace the first 2 moves of L and R. (L=1, R=11 -> sum 12 > 10, move R to 8; L=1, R=8 -> sum 9 < 10, move L to 2 -> 2+8=10 found)
+**Scope:** opposite-ends convergence on sorted data; fast/slow pointers (cycle detection) only if the goal needs it.
+
+### binary search
+*FR: recherche binaire / dichotomie · needs: loops and comprehensions*
+**Probe:** On a sorted array of 16 elements, what is the maximum number of comparisons to find a target or prove it's absent? In one sentence, why?
+**Expect:** 4 (or 5 depending on boundary definition). Each comparison cuts the search space in half ($2^4 = 16$).
+**⚠️ if:** says 8 or 16, or cannot explain why halving yields logarithmic time.
+**Exit exercise:** In sorted `[3, 7, 12, 18, 25, 31, 42]`, trace `low`, `high`, and `mid` to search for 18. (low=0, high=6, mid=3: arr[3]=18 found in 1 step; or search for 25: mid=3 (18 < 25), low=4, mid=5 (31 > 25), high=4, mid=4 found)
+**Scope:** loop invariant `low <= high`, integer midpoint calculation, handling bounds without off-by-one.
+
+### memoization
+*FR: mémoïsation / mise en cache · needs: functions and scope, lists and dicts*
+**Probe:** Why is naive recursive `fib(30)` so slow, and what does a cache dictionary change about the call tree?
+**Expect:** Naive recursion repeats the exact same sub-calls exponentially ($O(2^N)$); a cache stores the result of `fib(k)` the first time, turning repeated branches into $O(1)$ lookups ($O(N)$ total).
+**⚠️ if:** knows it's faster but cannot explain *what* is redundant or how the cache lookup intercepts the call.
+**Exit exercise:** In a recursive grid-walk `paths(r, c)` from `(0,0)` to `(2,2)`, what is the cache key, and how many unique states are computed? (key is `(r, c)`; 3x3 = 9 states)
+**Scope:** dict or `@lru_cache`, cache key design, space vs. time tradeoff.
+
+### prefix sum
+*FR: somme préfixe · needs: lists and dicts, loops and comprehensions*
+**Probe:** You need to answer 10,000 range sum queries `sum(arr[L..R])` on an array of 100,000 integers. How does a prefix sum array allow each query to run in O(1) time?
+**Expect:** Build `P` where `P[i]` is the sum of elements up to `i`. Then `sum(arr[L..R]) = P[R] - P[L-1]` (with $P[-1] = 0$), so every range sum is a single subtraction.
+**⚠️ if:** builds prefix sum but includes an inner loop during queries, or makes off-by-one errors on `L-1`.
+**Exit exercise:** Given `arr = [3, 1, 4, 2]`, give the 1-indexed prefix array `P`, and compute `sum(arr[1..2])` (elements 1 and 4) using `P`. (P = [0, 3, 4, 8, 10]; sum = P[3] - P[1] = 8 - 3 = 5)
+**Scope:** 1D prefix arrays, 1-indexed vs 0-indexed offset handling.
